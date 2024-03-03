@@ -1,0 +1,9 @@
+{
+  "short_name": "Air Fry DB",
+  "name": "Air Fry Recipe Database",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
