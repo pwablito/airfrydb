@@ -5,7 +5,6 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
 } from 'material-react-table';
-import { ThemeProvider, useTheme } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
@@ -13,12 +12,15 @@ import TextField from '@mui/material/TextField';
 
 
 function App() {
-
   const [recipes, setRecipes] = useState([])
+  const [displayedRecipe, setDisplayedRecipe] = useState({})
   const [loaded, setLoaded] = useState(false)
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const [displayModalOpen, setDisplayModalOpen] = useState(false);
   const handleAddModalOpen = () => setAddModalOpen(true);
   const handleAddModalClose = () => setAddModalOpen(false);
+  const handleDisplayModalOpen = () => setDisplayModalOpen(true);
+  const handleDisplayModalClose = () => setDisplayModalOpen(false);
 
   const addName = useRef("")
   const addNotes = useRef("")
@@ -35,7 +37,6 @@ function App() {
       addNotes.current.value,
     )
     setAddModalOpen(false)
-    refreshRecipes()
   }
 
   function refreshRecipes() {
@@ -49,6 +50,11 @@ function App() {
   function deleteRecipe(id) {
     axios.delete(`/api/recipes/${id}`)
       .then(refreshRecipes)
+  }
+
+  function deleteDisplayed() {
+    console.log("Deleting", displayedRecipe)
+    deleteRecipe(displayedRecipe.id)
   }
 
   function addRecipe(name, temp, cook_minutes, shake_times, notes) {
@@ -106,8 +112,11 @@ function App() {
     ],
     data: recipes,
     muiTableBodyRowProps: ({ row }) => ({
-      onClick: (event) => {
-        console.log(row.original.id);
+      onClick: (_) => {
+        console.log(row.original);
+        setDisplayedRecipe(row.original)
+
+        setDisplayModalOpen(true)
       },
       sx: {
         cursor: 'pointer',
@@ -117,7 +126,7 @@ function App() {
 
   return (
     <div className="App">
-      <body>
+      <div>
         <h1>Air Fry DB <Button onClick={handleAddModalOpen} variant="outlined">Add Recipe</Button></h1>
         <Modal
           open={addModalOpen}
@@ -178,8 +187,23 @@ function App() {
 
           </Box>
         </Modal>
-        {loaded ? <ThemeProvider theme={useTheme()}><MaterialReactTable table={table} /></ThemeProvider> : <p>Loading...</p>}
-      </body>
+        {loaded ? <MaterialReactTable table={table} /> : <p>Loading...</p>}
+        <Modal
+          open={displayModalOpen}
+          onClose={handleDisplayModalClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={addModalStyle}>
+            <p>Name: {displayedRecipe.name}</p>
+            <p>Temperature (F): {displayedRecipe.temp}</p>
+            <p>Cook Time (s): {displayedRecipe.cook_time}</p>
+            <p>Shakes (#): {displayedRecipe.shakes}</p>
+            <p>Notes: {displayedRecipe.notes}</p>
+            <Button color="danger" onClick={deleteDisplayed} variant="outlined">Delete</Button>
+          </Box>
+        </Modal>
+      </div>
     </div>
 
   )
