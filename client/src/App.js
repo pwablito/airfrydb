@@ -52,7 +52,6 @@ function App() {
   }
 
   function deleteDisplayed() {
-    console.log("Deleting", displayedRecipe)
     deleteRecipe(displayedRecipe.id)
     setDisplayedRecipe({})
     setDisplayModalOpen(false)
@@ -114,9 +113,7 @@ function App() {
     data: recipes,
     muiTableBodyRowProps: ({ row }) => ({
       onClick: (_) => {
-        console.log(row.original);
         setDisplayedRecipe(row.original)
-
         setDisplayModalOpen(true)
       },
       sx: {
