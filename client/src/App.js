@@ -19,7 +19,6 @@ function App() {
   const [displayModalOpen, setDisplayModalOpen] = useState(false);
   const handleAddModalOpen = () => setAddModalOpen(true);
   const handleAddModalClose = () => setAddModalOpen(false);
-  const handleDisplayModalOpen = () => setDisplayModalOpen(true);
   const handleDisplayModalClose = () => setDisplayModalOpen(false);
 
   const addName = useRef("")
@@ -55,6 +54,8 @@ function App() {
   function deleteDisplayed() {
     console.log("Deleting", displayedRecipe)
     deleteRecipe(displayedRecipe.id)
+    setDisplayedRecipe({})
+    setDisplayModalOpen(false)
   }
 
   function addRecipe(name, temp, cook_minutes, shake_times, notes) {
@@ -200,7 +201,7 @@ function App() {
             <p>Cook Time (s): {displayedRecipe.cook_time}</p>
             <p>Shakes (#): {displayedRecipe.shakes}</p>
             <p>Notes: {displayedRecipe.notes}</p>
-            <Button color="danger" onClick={deleteDisplayed} variant="outlined">Delete</Button>
+            <Button color="error" onClick={deleteDisplayed} variant="outlined">Delete</Button>
           </Box>
         </Modal>
       </div>
