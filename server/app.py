@@ -35,17 +35,22 @@ def get_recipes():
 def get_recipe(recipe_id):
     with db_lock:
         entries = read_db()
-    if recipe_id not in entries:
-        return "Not found", 404
-    return json.dumps(entries[recipe_id])
+    for entry in entries:
+        if entry["id"] == recipe_id:
+            return json.dumps(entry)
+    return "Not found", 404
 
 
 @app.route("/api/recipes", methods=["POST"])
 def new_recipe():
-    new_id = uuid.uuid4()
+    new_id = str(uuid.uuid4())
+    new_entry = request.json
+    new_entry["id"] = new_id
     with db_lock:
         entries = read_db()
-        entries[new_id] = request.json()
+        print(entries)
+        print(type(entries))
+        entries.append(new_entry)
         dump_db(entries)
     return json.dumps({
         "success": True,
@@ -56,10 +61,9 @@ def new_recipe():
 def delete_recipe(recipe_id):
     with db_lock:
         entries = read_db()
-        if recipe_id not in entries:
+        if recipe_id not in map(lambda entry: entry["id"], entries):
             return {"message": "Not Found"}, 404
-        del entries[recipe_id]
-        dump_db(entries)
+        dump_db(list(filter(lambda entry: entry["id"] != recipe_id, entries)))
     return json.dumps({
         "success": True,
     })
