@@ -1,6 +1,7 @@
 version: "3"
 
 services:
+
   client:
     image: airfrydb_client:latest
     build:
