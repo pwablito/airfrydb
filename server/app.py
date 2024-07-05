@@ -21,7 +21,7 @@ def dump_db(data):
 
 
 if not os.path.exists(DB_FILE_PATH):
-    dump_db({})
+    dump_db([])
 
 
 @app.route("/api/recipes", methods=["GET"])
